@@ -22,7 +22,7 @@ if 'score' not in st.session_state:
 
 # 3. 화면 UI 설정
 st.set_page_config(page_title="영단어 퀴즈 왕!", page_icon="⭐")
-st.title("🎡 영문법777-3권 객관식 영단어 퀴즈")
+st.title("🎡 777-3권 객관식 영단어 퀴즈")
 
 # 게임이 진행 중일 때
 if st.session_state.current_idx < len(st.session_state.word_list):
@@ -74,5 +74,6 @@ else:
 # 사이드바 점수 표시
 
 st.sidebar.metric("현재 점수", f"{st.session_state.score}점")
+
 
 
