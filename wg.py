@@ -4,7 +4,7 @@ import random
 # 1. 영단어 데이터 (30개)
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
-        "late": "늦은", "졸린": "sleepy", "우승자,승리자": "winner", "운이 좋은": "lucky", "머무르다": "stay",
+        "늦은": "late", "졸린": "sleepy", "우승자,승리자": "winner", "운이 좋은": "lucky", "머무르다": "stay",
         "화난": "angry", "부유한": "rich", "방문하다": "visit", "공주": "princess", "따뜻한": "warm",
         "일본의": "japanese", "사무실": "office", "저렴한,싼": "cheap", "~을 비웃다": "laugh at", "공정한": "fair",
         "겁먹은": "scared", "첼로": "cello", "바라다": "wish", "배우다": "learn", "~로 덮다": "cover",
@@ -72,4 +72,5 @@ else:
         st.rerun()
 
 # 사이드바 점수 표시
+
 st.sidebar.metric("현재 점수", f"{st.session_state.score}점")
