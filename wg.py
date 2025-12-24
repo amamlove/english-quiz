@@ -4,12 +4,7 @@ import random
 # 1. 영단어 데이터 (30개)
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
-        "늦은": "late", "졸린": "sleepy", "우승자,승리자": "winner", "운이 좋은": "lucky", "머무르다": "stay",
-        "화난": "angry", "부유한": "rich", "방문하다": "visit", "공주": "princess", "따뜻한": "warm",
-        "일본의": "Japanese", "사무실": "office", "저렴한,싼": "cheap", "~을 비웃다": "laugh at", "공정한": "fair",
-        "겁먹은": "scared", "첼로": "cello", "바라다": "wish", "배우다": "learn", "~로 덮다": "cover",
-        "돌다": "turn", "끝나다,끝내다": "finish", "지나가다": "pass", "신발": "shoes", "엄마": "mother",
-        "아빠": "father", "친구": "friend", "아기": "baby", "선생님": "teacher", "의사": "doctor"
+       "삶, 인생": "life" , "일, 직업": "job" , "나라, 시골": "country" , "지구, 땅": "earth" , "문제": "problem" , "방법, 길": "way" , "언어": "language" , "대화": "dialog" , "이야기, 층": "story" , "다량, 많이": "lot" , "이름(을 붙이다)": "name" , "손, 건네주다": "hand" , "장소, 두다": "place" , "연습(하다)": "practice" , "일(하다)": "work" , "사용(하다)": "use" , "종류, 친절한": "kind" , "가지고있다, 먹다": "have" , "만들다": "make" , "~하게 하다, 허락하다": "let" , "얻다, 이르다, 되다": "get" , "데려가다, 필요로 하다": "take" , "살다, 살아있는": "live" , "다른": "different" , "중요한": "important" , "다른, 그 밖의": "other" , "옳은, 오른쪽의": "right" , "확신하는, 물론": "sure" , "너무, ~도 또한": "too" , "잘, 건강한, 우물": "well" , "사람, 인물": "person" , "옷, 의복": "clothes" , "영화": "movie" , "활동": "activity" , "예, 모범": "example" , "편지, 글자": "letter" , "불, 화재": "fire" , "분, 순간": "minute" , "부분, 가르다": "part" , "계획(하다)": "plan" , "식물, 공장": "plant" , "공원, 주차하다": "park" , "통화하다, 부르다": "call" , "시도하다, 노력하다": "try" , "필요(하다)": "need" , "재미, 장난": "fun" , "미래": "future" , "유지하다, 지키다": "keep" , "듣다": "listen" , "찾아내다, 발견하다": "find" , "배우다, 알아내다": "learn" , "의미하다": "mean" , "지난, 마지막의": "last" , "무슨, 약간의": "any" , "각각": "each" , "또 하나의": "another" , "같은": "same" , "단단한, 어려운": "hard" , "~도 또한": "also" , "참으로, 정말": "really" , "새": "bird" , "여행": "trip" , "휴가, 방학": "vacation" , "강좌, 과정, 진로": "course" , "공간, 우주": "space" , "거리, 도로": "street" , "측, 쪽, 측면": "side" , "종이, 서류, 신문": "paper" , "신문": "newspaper" , "얼굴, 직면하다": "face" , "마음, 꺼리다": "mind" , "자원봉사자, 자원하다": "volunteer" , "변화(하다), 거스름돈": "change" , "방문(하다)": "visit" , "시작(하다)": "start" , "지켜보다, 시계": "watch" , "빛, 밝은": "light" , "선물, 현재, 출석한": "present" , "가장 좋아하는": "favorite" , "즐기다": "enjoy" , "이기다, 획득하다": "win" , "이해하다": "understand" , "따뜻한": "warm" , "깨끗한": "clean" , "제발, 기쁘게 하다": "please" , "재미있는": "interesting" , "유명한": "famous" , "특별한, 전문의": "special" , "단지, 오직, 유일한": "only" , "막, 단지": "just" , "자연, 천성": "nature" , "레스토랑, 식당": "restaurant" , "무리, 집단": "group" , "습관": "habit" , "문화": "culture" , "정보": "information" , "광고": "advertisement" , "과학": "science" , "유전자": "gene" , "전쟁": "war"
     }
     st.session_state.word_list = list(st.session_state.words_dict.keys())
     random.shuffle(st.session_state.word_list)
@@ -74,6 +69,7 @@ else:
 # 사이드바 점수 표시
 
 st.sidebar.metric("현재 점수", f"{st.session_state.score}점")
+
 
 
 
