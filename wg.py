@@ -1,9 +1,8 @@
 import streamlit as st
 import random
 from gtts import gTTS
-import uuid
-import base64
 import os
+import uuid
 
 # =====================
 # 1. 단어 데이터 (100단어)
@@ -116,7 +115,7 @@ if 'words_dict' not in st.session_state:
     random.shuffle(st.session_state.word_list)
 
 # =====================
-# 상태
+# 2. 상태
 # =====================
 if 'idx' not in st.session_state:
     st.session_state.idx = 0
@@ -124,47 +123,37 @@ if 'idx' not in st.session_state:
     st.session_state.answered = False
     st.session_state.result = None
     st.session_state.correct_answer = None
-
-st.set_page_config("영단어 퀴즈", "🔊")
-st.title("🎯 영단어 퀴즈 (자동 발음)")
+    st.session_state.options = []
 
 # =====================
-# 게임
+# 3. UI
+# =====================
+st.set_page_config("영단어 퀴즈", "🔊")
+st.title("🎯 영단어 퀴즈 + 발음 듣기")
+
+# =====================
+# 4. 게임 진행
 # =====================
 if st.session_state.idx < 100:
     word = st.session_state.word_list[st.session_state.idx]
     answer = st.session_state.words_dict[word]
-    pure_word = word.split(" ")[0]
 
-    # 🔊 TTS 생성
-    tts = gTTS(pure_word, lang="en")
-    filename = f"{uuid.uuid4()}.mp3"
-    tts.save(filename)
+    pure_word = word.split(" ")[0]  # 발음용 (기호 제거)
 
-    with open(filename, "rb") as f:
-        audio_bytes = f.read()
-    audio_b64 = base64.b64encode(audio_bytes).decode()
-
-    # 🔊 HTML 자동 재생 (핵심)
-    st.markdown(
-        f"""
-        <audio autoplay>
-            <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
-        </audio>
-        """,
-        unsafe_allow_html=True
-    )
-
-    os.remove(filename)
+    # 🔊 발음 생성
+    tts = gTTS(text=pure_word, lang="en")
+    audio_file = f"audio_{uuid.uuid4()}.mp3"
+    tts.save(audio_file)
 
     st.write(f"### 문제 {st.session_state.idx + 1} / 100")
-    st.info(f"**{word}** 의 뜻은?")
+    st.info(f"**{word}**")
+
+    st.audio(audio_file)
 
     if not st.session_state.answered:
         wrong = [v for v in st.session_state.words_dict.values() if v != answer]
-        options = random.sample(wrong, 3) + [answer]
-        random.shuffle(options)
-        st.session_state.options = options
+        st.session_state.options = random.sample(wrong, 3) + [answer]
+        random.shuffle(st.session_state.options)
 
     cols = st.columns(2)
     for i, opt in enumerate(st.session_state.options):
@@ -181,9 +170,9 @@ if st.session_state.idx < 100:
 
     if st.session_state.answered:
         if st.session_state.result == "correct":
-            st.success("🎉 정답!")
+            st.success("🎉 정답입니다!")
         else:
-            st.error(f"❌ 정답은 **{st.session_state.correct_answer}**")
+            st.error(f"❌ 틀렸어요! 정답은 **{st.session_state.correct_answer}** 입니다.")
 
         if st.button("다음 문제 ▶"):
             st.session_state.idx += 1
@@ -192,8 +181,20 @@ if st.session_state.idx < 100:
             st.session_state.correct_answer = None
             st.rerun()
 
+    # 임시 오디오 파일 삭제
+    os.remove(audio_file)
+
 else:
     st.success("🎊 완료!")
     st.header(f"점수: {st.session_state.score} / 100")
+
+    if st.button("다시 하기"):
+        random.shuffle(st.session_state.word_list)
+        st.session_state.idx = 0
+        st.session_state.score = 0
+        st.session_state.answered = False
+        st.session_state.result = None
+        st.session_state.correct_answer = None
+        st.rerun()
 
 st.sidebar.metric("현재 점수", st.session_state.score)
