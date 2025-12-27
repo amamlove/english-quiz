@@ -1,7 +1,6 @@
 import streamlit as st
 import random
-from gtts import gTTS
-import os
+
 
 # 1. 단어 데이터 (예시 20개, 필요하면 100개 전체 넣으세요)
 if 'words_dict' not in st.session_state:
@@ -102,3 +101,4 @@ else:
 
 # 사이드바 점수
 st.sidebar.metric("현재 점수", st.session_state.score)
+
