@@ -3,10 +3,9 @@ import random
 from gtts import gTTS
 import os
 
-# --- 1. 단어 데이터 (100단어) ---
+# 1. 단어 데이터 (예시 20개, 필요하면 100개 전체 넣으세요)
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
-        # PAGE 1
         "life [laɪf]": "삶, 인생",
         "job [dʒɒb]": "일, 직업",
         "country [ˈkʌntri]": "나라, 시골",
@@ -26,23 +25,21 @@ if 'words_dict' not in st.session_state:
         "kind [kaɪnd]": "종류, 친절한",
         "have [hæv]": "가지다",
         "make [meɪk]": "만들다",
-        "let [let]": "~하게 하다",
-        # PAGE 2 ~ PAGE 5 생략, 위 원본 그대로 넣으세요
+        "let [let]": "~하게 하다"
     }
-
     st.session_state.word_list = list(st.session_state.words_dict.keys())
     random.shuffle(st.session_state.word_list)
 
-# --- 2. 게임 상태 ---
+# 2. 게임 상태
 if 'idx' not in st.session_state:
     st.session_state.idx = 0
     st.session_state.score = 0
     st.session_state.answered = False
 
-# --- 3. UI 설정 ---
 st.set_page_config("영단어 퀴즈", "⭐")
 st.title("🎯 영단어 100제 퀴즈")
 
+# 현재 문제
 if st.session_state.idx < len(st.session_state.word_list):
     word = st.session_state.word_list[st.session_state.idx]
     answer = st.session_state.words_dict[word]
@@ -54,7 +51,7 @@ if st.session_state.idx < len(st.session_state.word_list):
         random.shuffle(options)
         st.session_state.options = options
 
-    st.write(f"### 문제 {st.session_state.idx + 1} / 100")
+    st.write(f"### 문제 {st.session_state.idx + 1} / {len(st.session_state.word_list)}")
 
     # 단어 + 발음 버튼
     col_word, col_audio = st.columns([3,1])
@@ -62,7 +59,6 @@ if st.session_state.idx < len(st.session_state.word_list):
         st.info(f"**{word}** 의 뜻은?")
     with col_audio:
         if st.button("🔊 발음 듣기", key=f"audio_{st.session_state.idx}"):
-            # 단어에서 첫 단어만 발음
             tts = gTTS(text=word.split()[0], lang='en')
             tts.save("temp.mp3")
             st.audio("temp.mp3")
@@ -74,11 +70,17 @@ if st.session_state.idx < len(st.session_state.word_list):
         with cols[i % 2]:
             if st.button(opt, disabled=st.session_state.answered):
                 st.session_state.answered = True
+                # 정답/오답 표시
                 if opt == answer:
                     st.success("🎉 정답!")
                     st.session_state.score += 1
                 else:
                     st.error(f"❌ 틀렸어요! 정답: **{answer}**")
+                # 선택한 단어 발음 재생
+                tts = gTTS(text=word.split()[0], lang='en')
+                tts.save("temp.mp3")
+                st.audio("temp.mp3")
+                os.remove("temp.mp3")
                 st.rerun()
 
     # 다음 문제 버튼
@@ -89,8 +91,8 @@ if st.session_state.idx < len(st.session_state.word_list):
             st.rerun()
 
 else:
-    st.success("🎊 100문제 완료!")
-    st.header(f"점수: {st.session_state.score} / 100")
+    st.success("🎊 모든 문제 완료!")
+    st.header(f"점수: {st.session_state.score} / {len(st.session_state.word_list)}")
     if st.button("다시 하기"):
         random.shuffle(st.session_state.word_list)
         st.session_state.idx = 0
@@ -98,5 +100,5 @@ else:
         st.session_state.answered = False
         st.rerun()
 
-# 사이드바 점수 표시
+# 사이드바 점수
 st.sidebar.metric("현재 점수", st.session_state.score)
