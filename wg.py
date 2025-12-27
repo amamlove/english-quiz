@@ -1,8 +1,5 @@
 import streamlit as st
 import random
-from gtts import gTTS
-import uuid
-import os
 
 # =====================
 # 1. 단어 데이터 (100단어)
@@ -17,15 +14,15 @@ if 'words_dict' not in st.session_state:
         "way [weɪ]": "방법, 길",
         "language [ˈlæŋɡwɪdʒ]": "언어",
         "dialog [ˈdaɪəlɒɡ]": "대화",
-        "story [ˈstɔːri]": "이야기, 층",
-        "lot [lɒt]": "다량, 많이",
+        "story [ˈstɔːri]": "이야기",
+        "lot [lɒt]": "많이",
         "name [neɪm]": "이름",
         "hand [hænd]": "손",
         "place [pleɪs]": "장소",
         "practice [ˈpræktɪs]": "연습",
         "work [wɜːrk]": "일",
         "use [juːz]": "사용하다",
-        "kind [kaɪnd]": "종류, 친절한",
+        "kind [kaɪnd]": "친절한",
         "have [hæv]": "가지다",
         "make [meɪk]": "만들다",
         "let [let]": "~하게 하다",
@@ -40,74 +37,15 @@ if 'words_dict' not in st.session_state:
         "too [tuː]": "너무",
         "well [wel]": "잘",
         "person [ˈpɜːrsn]": "사람",
-        "clothes [kləʊðz]": "옷",
         "movie [ˈmuːvi]": "영화",
-        "activity [ækˈtɪvəti]": "활동",
         "example [ɪɡˈzæmpl]": "예",
-        "letter [ˈletə(r)]": "편지",
-        "fire [ˈfaɪə(r)]": "불",
-        "minute [ˈmɪnɪt]": "분",
-        "part [pɑːrt]": "부분",
         "plan [plæn]": "계획",
-        "plant [plænt]": "식물",
-        "park [pɑːrk]": "공원",
-        "call [kɔːl]": "부르다",
         "try [traɪ]": "시도하다",
-        "need [niːd]": "필요하다",
-        "fun [fʌn]": "재미",
         "future [ˈfjuːtʃə(r)]": "미래",
-        "keep [kiːp]": "유지하다",
-        "listen [ˈlɪsn]": "듣다",
-        "find [faɪnd]": "찾다",
         "learn [lɜːrn]": "배우다",
-        "mean [miːn]": "의미하다",
-        "last [lɑːst]": "마지막",
-        "any [ˈeni]": "어떤",
-        "each [iːtʃ]": "각각",
-        "another [əˈnʌðə(r)]": "또 다른",
-        "same [seɪm]": "같은",
         "hard [hɑːrd]": "어려운",
-        "also [ˈɔːlsəʊ]": "또한",
-        "really [ˈrɪəli]": "정말",
-        "bird [bɜːrd]": "새",
-        "trip [trɪp]": "여행",
-        "vacation [veɪˈkeɪʃn]": "휴가",
-        "course [kɔːrs]": "과정",
-        "space [speɪs]": "공간",
-        "street [striːt]": "거리",
-        "side [saɪd]": "쪽",
-        "paper [ˈpeɪpə(r)]": "종이",
-        "newspaper [ˈnjuːzpeɪpə(r)]": "신문",
-        "face [feɪs]": "얼굴",
-        "mind [maɪnd]": "마음",
-        "volunteer [ˌvɒlənˈtɪə(r)]": "자원봉사자",
-        "change [tʃeɪndʒ]": "변화",
-        "visit [ˈvɪzɪt]": "방문하다",
-        "start [stɑːrt]": "시작하다",
-        "watch [wɒtʃ]": "보다",
-        "light [laɪt]": "빛",
-        "present [ˈpreznt]": "선물",
-        "favorite [ˈfeɪvərɪt]": "가장 좋아하는",
         "enjoy [ɪnˈdʒɔɪ]": "즐기다",
-        "win [wɪn]": "이기다",
-        "understand [ˌʌndəˈstænd]": "이해하다",
-        "warm [wɔːrm]": "따뜻한",
-        "clean [kliːn]": "깨끗한",
-        "please [pliːz]": "제발",
-        "interesting [ˈɪntrestɪŋ]": "재미있는",
-        "famous [ˈfeɪməs]": "유명한",
-        "special [ˈspeʃl]": "특별한",
-        "only [ˈəʊnli]": "오직",
-        "just [dʒʌst]": "단지",
-        "nature [ˈneɪtʃə(r)]": "자연",
-        "restaurant [ˈrestrɒnt]": "식당",
-        "group [ɡruːp]": "집단",
-        "habit [ˈhæbɪt]": "습관",
-        "culture [ˈkʌltʃə(r)]": "문화",
-        "information [ˌɪnfəˈmeɪʃn]": "정보",
-        "advertisement [ədˈvɜːrtɪsmənt]": "광고",
         "science [ˈsaɪəns]": "과학",
-        "gene [dʒiːn]": "유전자",
         "war [wɔːr]": "전쟁"
     }
 
@@ -123,18 +61,14 @@ if 'idx' not in st.session_state:
     st.session_state.answered = False
     st.session_state.result = None
     st.session_state.correct_answer = None
-    st.session_state.play_audio = False
 
-# =====================
-# UI
-# =====================
 st.set_page_config("영단어 퀴즈", "🔊")
-st.title("🎯 영단어 퀴즈 (발음 버튼)")
+st.title("🎯 영단어 퀴즈")
 
 # =====================
 # 게임 진행
 # =====================
-if st.session_state.idx < 100:
+if st.session_state.idx < len(st.session_state.word_list):
     word = st.session_state.word_list[st.session_state.idx]
     answer = st.session_state.words_dict[word]
     pure_word = word.split(" ")[0]
@@ -142,20 +76,19 @@ if st.session_state.idx < 100:
     st.write(f"### 문제 {st.session_state.idx + 1} / 100")
     st.info(f"**{word}** 의 뜻은?")
 
-    # 🔊 발음 버튼
-    if st.button("🔊 발음 듣기"):
-        st.session_state.play_audio = True
-
-    # 🔊 오디오 재생 (버튼 아래!)
-    if st.session_state.play_audio:
-        tts = gTTS(pure_word, lang="en")
-        audio_file = f"{uuid.uuid4()}.mp3"
-        tts.save(audio_file)
-
-        st.audio(audio_file)
-
-        os.remove(audio_file)
-        st.session_state.play_audio = False
+    # 🔊 발음 버튼 (브라우저 TTS)
+    st.markdown(
+        f"""
+        <button onclick="
+        var msg = new SpeechSynthesisUtterance('{pure_word}');
+        msg.lang = 'en-US';
+        speechSynthesis.speak(msg);
+        ">
+        🔊 발음 듣기
+        </button>
+        """,
+        unsafe_allow_html=True
+    )
 
     # 보기 생성
     if not st.session_state.answered:
@@ -189,11 +122,10 @@ if st.session_state.idx < 100:
             st.session_state.answered = False
             st.session_state.result = None
             st.session_state.correct_answer = None
-            st.session_state.play_audio = False
             st.rerun()
 
 else:
-    st.success("🎊 100문제 완료!")
+    st.success("🎊 모든 문제 완료!")
     st.header(f"최종 점수: {st.session_state.score} / 100")
 
 st.sidebar.metric("현재 점수", st.session_state.score)
