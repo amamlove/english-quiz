@@ -1,10 +1,11 @@
 import streamlit as st
 import random
 
+# =====================
 # 1. 단어 데이터 (100단어)
+# =====================
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
-        # PAGE 1
         "life [laɪf]": "삶, 인생",
         "job [dʒɒb]": "일, 직업",
         "country [ˈkʌntri]": "나라, 시골",
@@ -25,8 +26,6 @@ if 'words_dict' not in st.session_state:
         "have [hæv]": "가지다",
         "make [meɪk]": "만들다",
         "let [let]": "~하게 하다",
-
-        # PAGE 2
         "get [ɡet]": "얻다",
         "take [teɪk]": "데려가다",
         "live [lɪv]": "살다",
@@ -47,8 +46,6 @@ if 'words_dict' not in st.session_state:
         "minute [ˈmɪnɪt]": "분",
         "part [pɑːrt]": "부분",
         "plan [plæn]": "계획",
-
-        # PAGE 3
         "plant [plænt]": "식물",
         "park [pɑːrk]": "공원",
         "call [kɔːl]": "부르다",
@@ -69,8 +66,6 @@ if 'words_dict' not in st.session_state:
         "hard [hɑːrd]": "어려운",
         "also [ˈɔːlsəʊ]": "또한",
         "really [ˈrɪəli]": "정말",
-
-        # PAGE 4
         "bird [bɜːrd]": "새",
         "trip [trɪp]": "여행",
         "vacation [veɪˈkeɪʃn]": "휴가",
@@ -91,8 +86,6 @@ if 'words_dict' not in st.session_state:
         "present [ˈpreznt]": "선물",
         "favorite [ˈfeɪvərɪt]": "가장 좋아하는",
         "enjoy [ɪnˈdʒɔɪ]": "즐기다",
-
-        # PAGE 5
         "win [wɪn]": "이기다",
         "understand [ˌʌndəˈstænd]": "이해하다",
         "warm [wɔːrm]": "따뜻한",
@@ -118,56 +111,84 @@ if 'words_dict' not in st.session_state:
     st.session_state.word_list = list(st.session_state.words_dict.keys())
     random.shuffle(st.session_state.word_list)
 
-# 2. 게임 상태
+# =====================
+# 2. 상태 초기화
+# =====================
 if 'idx' not in st.session_state:
     st.session_state.idx = 0
     st.session_state.score = 0
     st.session_state.answered = False
+    st.session_state.result = None
+    st.session_state.correct_answer = None
+    st.session_state.options = []
 
-# UI
+# =====================
+# 3. UI
+# =====================
 st.set_page_config("영단어 퀴즈", "⭐")
 st.title("🎯 영단어 100제 퀴즈")
 
+# =====================
+# 4. 게임 진행
+# =====================
 if st.session_state.idx < 100:
     word = st.session_state.word_list[st.session_state.idx]
     answer = st.session_state.words_dict[word]
 
+    # 보기 생성
     if not st.session_state.answered:
         wrong = [v for v in st.session_state.words_dict.values() if v != answer]
-        options = random.sample(wrong, 3) + [answer]
-        random.shuffle(options)
-        st.session_state.options = options
+        st.session_state.options = random.sample(wrong, 3) + [answer]
+        random.shuffle(st.session_state.options)
 
     st.write(f"### 문제 {st.session_state.idx + 1} / 100")
     st.info(f"**{word}** 의 뜻은?")
 
+    # 선택 버튼
     cols = st.columns(2)
     for i, opt in enumerate(st.session_state.options):
         with cols[i % 2]:
-            if st.button(opt, disabled=st.session_state.answered):
+            if st.button(opt, disabled=st.session_state.answered, key=f"opt_{i}"):
                 st.session_state.answered = True
+                st.session_state.correct_answer = answer
+
                 if opt == answer:
-                    st.success("🎉 정답!")
+                    st.session_state.result = "correct"
                     st.session_state.score += 1
                 else:
-                    st.error(f"❌ 틀렸어요! 정답: **{answer}**")
+                    st.session_state.result = "wrong"
+
                 st.rerun()
 
+    # ===== 결과 표시 (버튼 밖!) =====
     if st.session_state.answered:
+        if st.session_state.result == "correct":
+            st.success("🎉 정답입니다!")
+        else:
+            st.error(f"❌ 틀렸어요! 정답은 **{st.session_state.correct_answer}** 입니다.")
+
         if st.button("다음 문제 ▶"):
             st.session_state.idx += 1
             st.session_state.answered = False
+            st.session_state.result = None
+            st.session_state.correct_answer = None
             st.rerun()
 
+# =====================
+# 5. 종료 화면
+# =====================
 else:
     st.success("🎊 100문제 완료!")
-    st.header(f"점수: {st.session_state.score} / 100")
+    st.header(f"최종 점수: {st.session_state.score} / 100")
 
     if st.button("다시 하기"):
         random.shuffle(st.session_state.word_list)
         st.session_state.idx = 0
         st.session_state.score = 0
         st.session_state.answered = False
+        st.session_state.result = None
+        st.session_state.correct_answer = None
         st.rerun()
 
+# 사이드바 점수
 st.sidebar.metric("현재 점수", st.session_state.score)
