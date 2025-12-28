@@ -1,8 +1,8 @@
 import streamlit as st
 import random
 
-st.set_page_config(page_title="영단어 퀴즈", page_icon="📝")
-st.title("🎯 영단어 퀴즈 ")
+st.set_page_config("영단어 퀴즈", "📝")
+st.title("🎯 영단어 퀴즈 (발음기호 객관식)")
 
 # =====================
 # 1. 단어 데이터 (100개)
@@ -115,19 +115,18 @@ if "words_dict" not in st.session_state:
     random.shuffle(st.session_state.word_list)
 
 # =====================
-# 2. 상태
+# 상태
 # =====================
 if "idx" not in st.session_state:
     st.session_state.idx = 0
     st.session_state.score = 0
     st.session_state.answered = False
-    st.session_state.selected = None
     st.session_state.options = []
 
 TOTAL = len(st.session_state.word_list)
 
 # =====================
-# 3. 퀴즈
+# 퀴즈
 # =====================
 if st.session_state.idx < TOTAL:
     word = st.session_state.word_list[st.session_state.idx]
@@ -141,22 +140,20 @@ if st.session_state.idx < TOTAL:
         st.session_state.options = random.sample(wrong, 3) + [correct]
         random.shuffle(st.session_state.options)
 
-    cols = st.columns(2)
-    for i, opt in enumerate(st.session_state.options):
-        with cols[i % 2]:
-            if st.button(
-                opt,
-                key=f"opt_{st.session_state.idx}_{i}",
-                disabled=st.session_state.answered
-            ):
-                st.session_state.selected = opt
-                st.session_state.answered = True
-                if opt == correct:
-                    st.session_state.score += 1
-                st.rerun()
+    choice = st.radio(
+        "뜻을 선택하세요",
+        st.session_state.options,
+        key=f"radio_{st.session_state.idx}",
+        disabled=st.session_state.answered
+    )
+
+    if st.button("정답 제출"):
+        st.session_state.answered = True
+        if choice == correct:
+            st.session_state.score += 1
 
     if st.session_state.answered:
-        if st.session_state.selected == correct:
+        if choice == correct:
             st.success("🎉 정답입니다!")
         else:
             st.error(f"❌ 틀렸습니다! 정답은 **{correct}** 입니다.")
@@ -164,7 +161,6 @@ if st.session_state.idx < TOTAL:
         if st.button("다음 문제 ▶"):
             st.session_state.idx += 1
             st.session_state.answered = False
-            st.session_state.selected = None
             st.session_state.options = []
             st.rerun()
 
