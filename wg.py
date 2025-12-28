@@ -2,7 +2,7 @@ import streamlit as st
 import random
 
 st.set_page_config(page_title="영단어 퀴즈", page_icon="📝")
-st.title("🎯 영단어 퀴즈 (발음기호 객관식)")
+st.title("🎯 영단어 퀴즈 ")
 
 # =====================
 # 1. 단어 데이터 (100개)
@@ -121,25 +121,24 @@ if "idx" not in st.session_state:
     st.session_state.idx = 0
     st.session_state.score = 0
     st.session_state.answered = False
-    st.session_state.result = None
-    st.session_state.correct = None
+    st.session_state.selected = None
     st.session_state.options = []
 
 TOTAL = len(st.session_state.word_list)
 
 # =====================
-# 3. 퀴즈 진행
+# 3. 퀴즈
 # =====================
 if st.session_state.idx < TOTAL:
     word = st.session_state.word_list[st.session_state.idx]
-    answer = st.session_state.words_dict[word]
+    correct = st.session_state.words_dict[word]
 
     st.write(f"### 문제 {st.session_state.idx + 1} / {TOTAL}")
     st.info(f"**{word}**")
 
     if not st.session_state.answered:
-        wrong = [v for v in st.session_state.words_dict.values() if v != answer]
-        st.session_state.options = random.sample(wrong, 3) + [answer]
+        wrong = [v for v in st.session_state.words_dict.values() if v != correct]
+        st.session_state.options = random.sample(wrong, 3) + [correct]
         random.shuffle(st.session_state.options)
 
     cols = st.columns(2)
@@ -150,41 +149,27 @@ if st.session_state.idx < TOTAL:
                 key=f"opt_{st.session_state.idx}_{i}",
                 disabled=st.session_state.answered
             ):
+                st.session_state.selected = opt
                 st.session_state.answered = True
-                st.session_state.correct = answer
-                if opt == answer:
-                    st.session_state.result = "correct"
+                if opt == correct:
                     st.session_state.score += 1
-                else:
-                    st.session_state.result = "wrong"
                 st.rerun()
 
     if st.session_state.answered:
-        if st.session_state.result == "correct":
+        if st.session_state.selected == correct:
             st.success("🎉 정답입니다!")
         else:
-            st.error(f"❌ 틀렸습니다! 정답은 **{st.session_state.correct}** 입니다.")
+            st.error(f"❌ 틀렸습니다! 정답은 **{correct}** 입니다.")
 
         if st.button("다음 문제 ▶"):
             st.session_state.idx += 1
             st.session_state.answered = False
-            st.session_state.result = None
-            st.session_state.correct = None
+            st.session_state.selected = None
             st.session_state.options = []
             st.rerun()
 
 else:
     st.success("🎊 모든 문제 완료!")
     st.header(f"점수: {st.session_state.score} / {TOTAL}")
-
-    if st.button("다시 하기"):
-        random.shuffle(st.session_state.word_list)
-        st.session_state.idx = 0
-        st.session_state.score = 0
-        st.session_state.answered = False
-        st.session_state.result = None
-        st.session_state.correct = None
-        st.session_state.options = []
-        st.rerun()
 
 st.sidebar.metric("현재 점수", st.session_state.score)
