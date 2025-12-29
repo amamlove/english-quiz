@@ -116,6 +116,7 @@ if "order" not in st.session_state:
     random.shuffle(st.session_state.order)
     st.session_state.idx = 0
     st.session_state.score = 0
+    st.session_state.options = None
 
 st.set_page_config(page_title="영단어 퀴즈", page_icon="📘")
 st.title("📘 객관식 영단어 퀴즈")
@@ -124,40 +125,44 @@ st.title("📘 객관식 영단어 퀴즈")
 # 3. 퀴즈 진행
 # -------------------------------
 if st.session_state.idx < len(st.session_state.order):
+
     word = st.session_state.order[st.session_state.idx]
     answer = WORDS[word]
 
-    options = random.sample([v for v in WORDS.values() if v != answer], 3)
-    options.append(answer)
-    random.shuffle(options)
+    # 👉 보기 고정 (중요!)
+    if st.session_state.options is None:
+        opts = random.sample([v for v in WORDS.values() if v != answer], 3)
+        opts.append(answer)
+        random.shuffle(opts)
+        st.session_state.options = opts
 
     st.write(f"### 문제 {st.session_state.idx + 1} / 100")
     st.progress(st.session_state.idx / 100)
     st.info(f"**{word}** 의 뜻은?")
 
     col1, col2 = st.columns(2)
-    clicked = None
 
-    for i, opt in enumerate(options):
+    for i, opt in enumerate(st.session_state.options):
         with col1 if i % 2 == 0 else col2:
             if st.button(opt, key=f"{st.session_state.idx}_{i}", use_container_width=True):
-                clicked = opt
 
-    if clicked:
-        if clicked == answer:
-            st.success("🎉 정답!")
-            st.session_state.score += 1
-        else:
-            st.error("❌ 오답!")
+                # 정답 판정 (이제 절대 틀리지 않음)
+                if opt == answer:
+                    st.success("🎉 정답!")
+                    st.session_state.score += 1
+                else:
+                    st.error("❌ 오답!")
+                    st.markdown(
+                        f"<div style='padding:10px; background:#ff4b4b; "
+                        f"color:white; border-radius:6px; font-weight:bold'>"
+                        f"정답: {answer}</div>",
+                        unsafe_allow_html=True,
+                    )
 
-            # 🔴 정답 빨간색 표시
-            st.markdown(
-                f"<div style='padding:12px; background:#ff4b4b; color:white; "
-                f"border-radius:8px; font-weight:bold'>{answer}</div>",
-                unsafe_allow_html=True,
-            )
-
-        st.session_state.idx += 1
+                # 다음 문제 준비
+                st.session_state.idx += 1
+                st.session_state.options = None
+                st.rerun()
 
 else:
     st.success("🎊 모든 문제 완료!")
@@ -168,3 +173,5 @@ else:
         random.shuffle(st.session_state.order)
         st.session_state.idx = 0
         st.session_state.score = 0
+        st.session_state.options = None
+        st.rerun()
