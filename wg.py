@@ -77,7 +77,6 @@ WORDS = {
     "newspaper [ˈnjuːzpeɪpə(r)]": "신문",
     "face [feɪs]": "얼굴",
     "mind [maɪnd]": "마음",
-    "volunteer [ˌvɒlənˈtɪə(r)]": "자원봉사자",
     "change [tʃeɪndʒ]": "변화",
     "visit [ˈvɪzɪt]": "방문하다",
     "start [stɑːrt]": "시작하다",
@@ -90,73 +89,87 @@ WORDS = {
     "understand [ˌʌndəˈstænd]": "이해하다",
     "warm [wɔːrm]": "따뜻한",
     "clean [kliːn]": "깨끗한",
-    "please [pliːz]": "제발",
     "interesting [ˈɪntrəstɪŋ]": "재미있는",
     "famous [ˈfeɪməs]": "유명한",
     "special [ˈspeʃl]": "특별한",
-    "only [ˈəʊnli]": "오직",
-    "just [dʒʌst]": "단지",
-    "nature [ˈneɪtʃə(r)]": "자연",
-    "restaurant [ˈrestrɒnt]": "식당",
-    "group [ɡruːp]": "집단",
-    "habit [ˈhæbɪt]": "습관",
-    "culture [ˈkʌltʃə(r)]": "문화",
-    "information [ˌɪnfəˈmeɪʃn]": "정보",
-    "advertisement [ədˈvɜːrtɪsmənt]": "광고",
-    "science [ˈsaɪəns]": "과학",
-    "gene [dʒiːn]": "유전자",
-    "war [wɔːr]": "전쟁",
+    "nature [ˈneɪtʃə(r)]": "자연"
 }
 
 # -------------------------------
-# 상태
+# 상태 초기화
 # -------------------------------
 if "order" not in st.session_state:
     st.session_state.order = list(WORDS.keys())
     random.shuffle(st.session_state.order)
     st.session_state.idx = 0
     st.session_state.score = 0
+    st.session_state.answered = False
+    st.session_state.selected = None
 
 st.title("📘 영단어 객관식 퀴즈")
 
 # -------------------------------
-# 퀴즈
+# 퀴즈 진행
 # -------------------------------
 if st.session_state.idx < len(st.session_state.order):
 
     word = st.session_state.order[st.session_state.idx]
-    correct_meaning = WORDS[word]
+    correct = WORDS[word]
 
     wrongs = random.sample(
-        [v for v in WORDS.values() if v != correct_meaning], 3
+        [v for v in WORDS.values() if v != correct], 3
     )
-    options = wrongs + [correct_meaning]
+    options = wrongs + [correct]
     random.shuffle(options)
+    correct_index = options.index(correct)
 
-    correct_index = options.index(correct_meaning)
-
-    st.write(f"### 문제 {st.session_state.idx + 1} / 100")
+    st.write(f"### 문제 {st.session_state.idx + 1} / {len(WORDS)}")
     st.info(f"**{word}** 의 뜻은?")
 
     col1, col2 = st.columns(2)
     for i, opt in enumerate(options):
         with col1 if i % 2 == 0 else col2:
-            if st.button(opt, key=f"{st.session_state.idx}_{i}", use_container_width=True):
+            if st.button(
+                opt,
+                key=f"{st.session_state.idx}_{i}",
+                use_container_width=True,
+                disabled=st.session_state.answered
+            ):
+                st.session_state.answered = True
+                st.session_state.selected = i
                 if i == correct_index:
-                    st.success("🎉 정답!")
                     st.session_state.score += 1
-                else:
-                    st.error(f"❌ 오답! 정답: {correct_meaning}")
 
-                st.session_state.idx += 1
-                st.rerun()
+    # -------------------------------
+    # 결과 표시
+    # -------------------------------
+    if st.session_state.answered:
+        if st.session_state.selected == correct_index:
+            st.success("🎉 정답!")
+        else:
+            st.error("❌ 오답!")
+            st.markdown(
+                f"<span style='color:red; font-weight:bold;'>정답: {correct}</span>",
+                unsafe_allow_html=True
+            )
 
+        if st.button("다음 문제 ▶"):
+            st.session_state.idx += 1
+            st.session_state.answered = False
+            st.session_state.selected = None
+            st.rerun()
+
+# -------------------------------
+# 결과 화면
+# -------------------------------
 else:
-    st.success("🎊 완료!")
-    st.header(f"점수: {st.session_state.score} / 100")
+    st.success("🎊 퀴즈 완료!")
+    st.header(f"점수: {st.session_state.score} / {len(WORDS)}")
 
     if st.button("다시 시작"):
         random.shuffle(st.session_state.order)
         st.session_state.idx = 0
         st.session_state.score = 0
+        st.session_state.answered = False
+        st.session_state.selected = None
         st.rerun()
