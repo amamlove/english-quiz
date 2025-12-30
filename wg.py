@@ -1,5 +1,6 @@
 import streamlit as st
 import random
+import time
 
 # 1. 영단어 데이터 (100개)
 if 'words_dict' not in st.session_state:
@@ -47,6 +48,7 @@ if 'score' not in st.session_state:
     st.session_state.score = 0
     st.session_state.current_idx = 0
     st.session_state.prev_idx = -1
+    st.session_state.feedback = None # 정답/오답 피드백 저장용
 
 # 3. 화면 UI 설정
 st.set_page_config(page_title="영단어 퀴즈 왕!", page_icon="⭐")
@@ -57,7 +59,7 @@ if st.session_state.current_idx < len(st.session_state.word_list):
     current_word = st.session_state.word_list[st.session_state.current_idx]
     correct_mean = st.session_state.words_dict[current_word]
 
-    # 오답 보기 생성 (현재 정답 제외하고 랜덤하게 3개 선택)
+    # 보기 생성 (인덱스가 바뀔 때만 새로 생성)
     if st.session_state.prev_idx != st.session_state.current_idx:
         other_means = [v for k, v in st.session_state.words_dict.items() if v != correct_mean]
         options = random.sample(other_means, 3)
@@ -65,33 +67,53 @@ if st.session_state.current_idx < len(st.session_state.word_list):
         random.shuffle(options)
         st.session_state.options = options
         st.session_state.prev_idx = st.session_state.current_idx
+        st.session_state.feedback = None # 새 문제 시작 시 피드백 초기화
 
-    # 진행도와 문제 표시
+    # 진행도 표시
     st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
     st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
-    st.info(f"다음 단어의 뜻은 무엇일까요? \n\n ## **[ {current_word} ]**")
+    
+    # 문제 출제 영역
+    question_container = st.empty()
+    question_container.info(f"다음 단어의 뜻은 무엇일까요? \n\n ## **[ {current_word} ]**")
 
-    # 객관식 버튼 배치 (2x2 레이아웃)
-    col1, col2 = st.columns(2)
-    for i, option in enumerate(st.session_state.options):
-        with col1 if i % 2 == 0 else col2:
-            if st.button(option, key=f"btn_{i}", use_container_width=True):
-                if option == correct_mean:
-                    st.session_state.score += 1
-                    st.success("🎉 정답이에요!")
-                    # 정답 시에도 다음으로 넘어가기 위해 약간의 대기 후 rerun 하거나 
-                    # 즉시 넘어가도록 설정 (여기서는 즉시 이동)
-                else:
-                    # 정답을 빨간색으로 강조해서 표시 (HTML 사용)
-                    st.error(f"❌ 틀렸어요! 정답은 :red[**{correct_mean}**] 입니다.")
+    # 객관식 버튼 레이아웃
+    placeholder = st.container()
+    with placeholder:
+        col1, col2 = st.columns(2)
+        for i, option in enumerate(st.session_state.options):
+            with col1 if i % 2 == 0 else col2:
+                # 틀렸을 때 정답 버튼을 빨간색으로 표시하기 위해 버튼 레이블 조건부 설정
+                button_label = option
+                if st.session_state.feedback == "wrong" and option == correct_mean:
+                    button_label = f"🚩 {option} (정답)"
                 
-                # 다음 문제로 넘어가기 위한 상태 업데이트
-                st.session_state.current_idx += 1
-                st.rerun()
+                if st.button(button_label, key=f"btn_{i}", use_container_width=True, disabled=(st.session_state.feedback is not None)):
+                    if option == correct_mean:
+                        st.session_state.score += 1
+                        st.session_state.feedback = "correct"
+                        st.success("🎉 정답이에요!")
+                        time.sleep(0.8) # 정답 확인 시간
+                    else:
+                        st.session_state.feedback = "wrong"
+                        st.error(f"❌ 틀렸어요! 정답은 아래 빨간색 표시를 확인하세요.")
+                        # 여기서 다시 렌더링하여 버튼에 빨간색 표시가 나타나게 함
+                        st.rerun()
 
-    # 하단에 실시간 점수 누적 표시
+    # 오답 피드백 시 잠시 대기 후 다음 문제로
+    if st.session_state.feedback == "wrong":
+        time.sleep(1.5) # 오답 확인 시간 (정답을 빨갛게 보여주는 시간)
+        st.session_state.current_idx += 1
+        st.session_state.feedback = None
+        st.rerun()
+    elif st.session_state.feedback == "correct":
+        st.session_state.current_idx += 1
+        st.session_state.feedback = None
+        st.rerun()
+
+    # 실시간 누적 점수 표시
     st.markdown("---")
-    st.write(f"📊 현재 성적: **{st.session_state.score}** / {st.session_state.current_idx} 문제 맞춤")
+    st.subheader(f"📊 현재 맞은 개수: {st.session_state.score} / {st.session_state.current_idx} 문제 중")
 
 else:
     # 게임 종료 결과 화면
@@ -103,5 +125,6 @@ else:
         st.session_state.score = 0
         st.session_state.current_idx = 0
         st.session_state.prev_idx = -1
+        st.session_state.feedback = None
         random.shuffle(st.session_state.word_list)
         st.rerun()
