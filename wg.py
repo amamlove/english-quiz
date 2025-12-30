@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 
-# 1. 영단어 데이터
+# 1. 영단어 데이터 (100개)
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
         "life [laɪf]": "삶, 인생", "job [dʒɒb]": "일, 직업", "country [ˈkʌntri]": "나라, 시골",
@@ -56,9 +56,11 @@ st.title("🎡 객관식 영단어 퀴즈")
 # 게임 종료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
     st.balloons()
-    st.header(f"🎊 완료! 점수: {st.session_state.score} / {len(st.session_state.word_list)}")
+    st.header(f"🎊 완료! 최종 점수: {st.session_state.score} / {len(st.session_state.word_list)}")
     if st.button("다시 도전하기"):
-        st.session_state.clear()
+        # 전체 상태 초기화
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
         st.rerun()
     st.stop()
 
@@ -79,20 +81,23 @@ if st.session_state.prev_idx != st.session_state.current_idx:
 st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
 st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
 
-# 문제와 버튼을 담을 컨테이너
+# 문제와 버튼 영역
 container = st.empty()
 
 with container.container():
-    # 오답일 때만 정답을 빨간 박스로 아주 크게 표시
     if st.session_state.is_wrong:
+        # 오답일 때 단어와 뜻을 함께 아주 크게 표시
         st.markdown(f"""
-            <div style="background-color: #ffcccc; padding: 30px; border-radius: 15px; border: 5px solid red; text-align: center;">
-                <h2 style="color: black; margin: 0;">틀렸습니다!</h2>
-                <p style="font-size: 1.2rem; color: #333;">정답은 바로:</p>
-                <h1 style="color: red; font-size: 3.5rem; margin: 10px 0;">{correct_mean}</h1>
+            <div style="background-color: #fff0f0; padding: 40px; border-radius: 20px; border: 6px solid #ff4b4b; text-align: center; box-shadow: 0px 4px 15px rgba(0,0,0,0.1);">
+                <h2 style="color: #555; margin-bottom: 20px;">틀렸습니다! 다시 외워보세요.</h2>
+                <div style="background-color: white; padding: 20px; border-radius: 10px; display: inline-block; border: 2px solid #ff4b4b;">
+                    <h1 style="color: #111; font-size: 2.5rem; margin: 0;">{current_word}</h1>
+                    <h1 style="color: #ff4b4b; font-size: 3.5rem; margin: 10px 0;">{correct_mean}</h1>
+                </div>
+                <p style="color: #888; margin-top: 20px;">잠시 후 다음 문제로 넘어갑니다...</p>
             </div>
         """, unsafe_allow_html=True)
-        time.sleep(1.8) # 충분히 볼 시간 줌
+        time.sleep(2.0) # 학습을 위해 조금 더 긴 시간 제공
         st.session_state.current_idx += 1
         st.session_state.is_wrong = False
         st.rerun()
@@ -105,7 +110,7 @@ with container.container():
                 if st.button(option, key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
                     if option == correct_mean:
                         st.session_state.score += 1
-                        st.success("🎉 정답!")
+                        st.success("🎉 정답입니다!")
                         time.sleep(0.6)
                         st.session_state.current_idx += 1
                         st.rerun()
@@ -113,6 +118,6 @@ with container.container():
                         st.session_state.is_wrong = True
                         st.rerun()
 
-# 누적 점수 하단 표시
+# 누적 점수 하단 고정 표시
 st.divider()
-st.markdown(f"#### 📈 현재 성적: `{st.session_state.score}` / `{st.session_state.current_idx}` (맞은 개수 / 진행 문제 수)")
+st.markdown(f"#### 📈 실시간 성적: <span style='color:blue'>{st.session_state.score}</span> / {st.session_state.current_idx} (맞은 개수 / 진행 수)", unsafe_allow_html=True)
