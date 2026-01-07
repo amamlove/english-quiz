@@ -18,7 +18,7 @@ if 'score' not in st.session_state:
     st.session_state.is_wrong = False
 
 st.set_page_config(page_title="영단어 퀴즈 왕!", page_icon="⭐")
-st.title("🎡매일 영단어2주차차 ""
+st.title("🎡매일 영단어2주차 "
 
 # 게임 종료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
@@ -96,5 +96,6 @@ if st.session_state.is_wrong:
 # 누적 점수 하단 표시
 st.divider()
 st.markdown(f"#### 📈 실시간 성적: **{st.session_state.score}** / {st.session_state.current_idx} (맞은 개수 / 진행 수)")
+
 
 
