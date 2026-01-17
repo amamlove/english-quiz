@@ -2,7 +2,7 @@ import streamlit as st
 import random
 import time
 
-# 1. 단어 데이터 (단어: [발음기호, 한글읽기, 뜻])
+# 1. 단어 데이터 세션 관리 (IndexError 방지를 위해 모든 데이터 형식 검증 완료)
 if 'words_dict' not in st.session_state:
     st.session_state.words_dict = {
         # --- PAGE 1 ---
@@ -45,7 +45,9 @@ if 'words_dict' not in st.session_state:
         "very": ["ˈveri", "베리", "매우"], "hard": ["hɑːd", "하드", "열심히"], 
         "perfect": ["ˈpɜːfɪkt", "퍼펙트", "완벽한"], "painting": ["ˈpeɪntɪŋ", "페인팅", "그림"], 
         "well": ["wel", "웰", "잘"], "bank": ["bæŋk", "뱅크", "은행"], 
-        "park": ["pɑːk", "파크", "공원"], "train": ["treɪn", "기차"], "miss": ["mɪs", "미스", "놓치다"],
+        "park": ["pɑːk", "파크", "공원"], 
+        "train": ["treɪn", "트레인", "기차"], 
+        "miss": ["mɪs", "미스", "놓치다"],
 
         # --- PAGE 2 ---
         "late": ["leɪt", "레이트", "늦은"], "sleepy": ["ˈsliːpi", "슬리피", "졸린"], 
@@ -136,23 +138,19 @@ if 'words_dict' not in st.session_state:
     st.session_state.word_list = list(st.session_state.words_dict.keys())
     random.shuffle(st.session_state.word_list)
 
-# 초기 세션 상태 설정
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-if 'current_idx' not in st.session_state:
-    st.session_state.current_idx = 0
-if 'is_wrong' not in st.session_state:
-    st.session_state.is_wrong = False
-if 'options' not in st.session_state:
-    st.session_state.options = []
+# 2. 초기 세션 상태 설정
+if 'score' not in st.session_state: st.session_state.score = 0
+if 'current_idx' not in st.session_state: st.session_state.current_idx = 0
+if 'is_wrong' not in st.session_state: st.session_state.is_wrong = False
+if 'options' not in st.session_state: st.session_state.options = []
 
-st.set_page_config(page_title="영단어 777 발음 마스터", page_icon="📖")
+st.set_page_config(page_title="영단어 777", page_icon="📖")
 st.title("🎓 영단어 777-3권")
 
 # 완료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
     st.balloons()
-    st.header(f"🎊 모든 단어 학습 완료!")
+    st.header(f"🎊 모든 학습 완료!")
     st.subheader(f"최종 점수: {st.session_state.score} / {len(st.session_state.word_list)}")
     if st.button("처음부터 다시 하기"):
         st.session_state.score = 0
@@ -162,35 +160,35 @@ if st.session_state.current_idx >= len(st.session_state.word_list):
         st.rerun()
     st.stop()
 
-# 현재 단어 정보
+# 현재 단어 데이터 안전하게 추출
 current_word = st.session_state.word_list[st.session_state.current_idx]
 word_data = st.session_state.words_dict[current_word]
-correct_ipa = word_data[0].replace("/", "") # 발음기호 슬러시 제거
-correct_pron = word_data[1]
-correct_mean = word_data[2]
+ipa = word_data[0].replace("/", "") # 슬러시 제거
+pronunciation = word_data[1]
+correct_meaning = word_data[2]
 
-# 보기 생성
+# 보기 생성 (오류 방지 로직 포함)
 if not st.session_state.options:
-    other_means = [v[2] for k, v in st.session_state.words_dict.items() if v[2] != correct_mean]
-    # IndexError 방지를 위해 list 형변환 및 중복 제거 후 샘플링
-    other_means = list(set(other_means))
-    st.session_state.options = random.sample(other_means, 3) + [correct_mean]
+    # 전체 단어 중 현재 정답이 아닌 '뜻'들만 추출
+    other_meanings = [v[2] for v in st.session_state.words_dict.values() if v[2] != correct_meaning]
+    # 중복 제거 및 3개 랜덤 샘플링
+    st.session_state.options = random.sample(list(set(other_meanings)), 3) + [correct_meaning]
     random.shuffle(st.session_state.options)
 
 # UI 레이아웃
 st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
 st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
 
-# 문제 박스 (단어: 파란색 / 발음: 슬러시 없음)
+# 문제 박스 (파란색 계열 디자인 적용)
 st.markdown(f"""
-<div style="background-color: #ffffff; padding: 40px; border-radius: 20px; text-align: center; border: 2px solid #e0e4e8; box-shadow: 4px 4px 15px rgba(0,0,0,0.05);">
-    <h1 style="margin: 0; color: #1F77B4; font-size: 4rem; font-family: 'Arial';">{current_word}</h1>
+<div style="background-color: #f0f7ff; padding: 40px; border-radius: 20px; text-align: center; border: 2px solid #3498db; box-shadow: 4px 4px 15px rgba(0,0,0,0.05);">
+    <h1 style="margin: 0; color: #2980b9; font-size: 4rem; font-family: 'Arial';">{current_word}</h1>
     <div style="margin-top: 20px;">
-        <span style="font-size: 1.6rem; color: #5D6D7E; background-color: #F8F9F9; padding: 5px 12px; border-radius: 8px; margin-right: 10px; border: 1px solid #D5DBDB;">
-            [{correct_ipa}]
+        <span style="font-size: 1.6rem; color: #5d6d7e; background-color: #ffffff; padding: 5px 12px; border-radius: 8px; margin-right: 10px; border: 1px solid #d5dbdb;">
+            [{ipa}]
         </span>
-        <span style="font-size: 1.6rem; color: #1F77B4; background-color: #EBF5FB; padding: 5px 12px; border-radius: 8px; border: 1px solid #AED6F1;">
-            [{correct_pron}]
+        <span style="font-size: 1.6rem; color: #2980b9; background-color: #e3f2fd; padding: 5px 12px; border-radius: 8px; border: 1px solid #bbdefb;">
+            {pronunciation}
         </span>
     </div>
 </div>
@@ -202,26 +200,26 @@ col1, col2 = st.columns(2)
 for i, option in enumerate(st.session_state.options):
     with col1 if i % 2 == 0 else col2:
         if st.session_state.is_wrong:
-            # 오답 시 정답 강조
-            if option == correct_mean:
+            # 오답 시 정답 강조 표시
+            if option == correct_meaning:
                 st.markdown(f'<div style="background-color: #27ae60; color: white; padding: 18px; border-radius: 12px; text-align: center; font-weight: bold; margin-bottom: 12px;">🎯 {option}</div>', unsafe_allow_html=True)
             else:
                 st.markdown(f'<div style="background-color: #f4f6f7; color: #bdc3c7; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 12px;">{option}</div>', unsafe_allow_html=True)
         else:
             if st.button(option, key=f"btn_{i}", use_container_width=True):
-                if option == correct_mean:
+                if option == correct_meaning:
                     st.session_state.score += 1
                     st.success("🎉 정답!")
                     time.sleep(0.8)
                     st.session_state.current_idx += 1
-                    st.session_state.options = [] # 다음 문제를 위해 보기 초기화
+                    st.session_state.options = []
                     st.rerun()
                 else:
                     st.session_state.is_wrong = True
                     st.error("❌ 오답!")
                     st.rerun()
 
-# 오답 시 지연 후 다음 문제로
+# 오답 시 지연 후 다음 문제로 자동 이동
 if st.session_state.is_wrong:
     time.sleep(2.0)
     st.session_state.current_idx += 1
