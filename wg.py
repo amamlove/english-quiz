@@ -4,8 +4,6 @@ import time
 
 # 1. 단어 데이터 (단어: [발음기호, 한글읽기, 뜻])
 if 'words_dict' not in st.session_state:
-    # 발음기호에서 슬러시(/) 기호를 미리 제거하여 저장하거나 
-    # 표시할 때 제거하도록 처리합니다.
     st.session_state.words_dict = {
         # --- PAGE 1 ---
         "spoon": ["spuːn", "스푼", "숟가락"], "beauty": ["ˈbjuːti", "뷰티", "아름다움, 미"], 
@@ -146,7 +144,7 @@ if 'score' not in st.session_state:
     st.session_state.is_wrong = False
 
 st.set_page_config(page_title="영단어 777 발음 마스터", page_icon="📖")
-st.title("🎓 영단어 777-3권")
+st.title("🎓 영단어 777-3권 (발음 포함)")
 
 # 완료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
@@ -164,10 +162,9 @@ if st.session_state.current_idx >= len(st.session_state.word_list):
 # 현재 문제 설정
 current_word = st.session_state.word_list[st.session_state.current_idx]
 word_data = st.session_state.words_dict[current_word]
-# 표시할 때 슬러시가 있다면 제거
-correct_ipa = word_data[0].replace("/", "")   
-correct_pron = word_data[1]  
-correct_mean = word_data[2]  
+correct_ipa = word_data[0]   # 발음기호
+correct_pron = word_data[1]  # 한글읽기
+correct_mean = word_data[2]  # 뜻
 
 # 보기 생성
 if st.session_state.prev_idx != st.session_state.current_idx:
@@ -184,18 +181,12 @@ if st.session_state.prev_idx != st.session_state.current_idx:
 st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
 st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
 
-# 문제 박스 (단어 색상 변경 및 발음기호 슬러시 제거)
+# 문제 박스 (단어, 발음기호, 한글읽기)
 st.markdown(f"""
-<div style="background-color: #ffffff; padding: 40px; border-radius: 20px; text-align: center; border: 2px solid #e0e4e8; box-shadow: 4px 4px 15px rgba(0,0,0,0.05);">
-    <h1 style="margin: 0; color: #E67E22; font-size: 4rem; font-family: 'Arial';">{current_word}</h1>
-    <div style="margin-top: 20px;">
-        <span style="font-size: 1.6rem; color: #7F8C8D; background-color: #F4F6F7; padding: 5px 12px; border-radius: 8px; margin-right: 10px; border: 1px solid #D5DBDB;">
-            [{correct_ipa}]
-        </span>
-        <span style="font-size: 1.6rem; color: #2E86C1; background-color: #EBF5FB; padding: 5px 12px; border-radius: 8px; border: 1px solid #AED6F1;">
-            [{correct_pron}]
-        </span>
-    </div>
+<div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #d1d5db;">
+    <h1 style="margin: 0; color: #1f77b4;">{current_word}</h1>
+    <h3 style="margin: 10px 0; color: #4b5563;">{correct_ipa}</h3>
+    <h4 style="margin: 0; color: #6b7280; font-weight: normal;">[{correct_pron}]</h4>
 </div>
 """, unsafe_allow_html=True)
 st.write("")
@@ -206,31 +197,28 @@ for i, option in enumerate(st.session_state.options):
     with col1 if i % 2 == 0 else col2:
         if st.session_state.is_wrong:
             if option == correct_mean:
-                st.markdown(f"""<div style="background-color: #27ae60; color: white; padding: 18px; border-radius: 12px; text-align: center; border: 1px solid #1e8449; font-weight: bold; margin-bottom: 12px; font-size: 1.2rem;">🎯 {option}</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="background-color: #2ecc71; color: white; padding: 10px; border-radius: 5px; text-align: center; border: 2px solid #27ae60; font-weight: bold; margin-bottom: 10px;">🎯 {option} (정답)</div>""", unsafe_allow_html=True)
             else:
-                st.markdown(f"""<div style="background-color: #f4f6f7; color: #bdc3c7; padding: 18px; border-radius: 12px; text-align: center; border: 1px solid #e5e8e8; margin-bottom: 12px; font-size: 1.2rem;">{option}</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="background-color: #f8f9fa; color: #adb5bd; padding: 10px; border-radius: 5px; text-align: center; border: 1px solid #dee2e6; margin-bottom: 10px;">{option}</div>""", unsafe_allow_html=True)
         else:
             if st.button(option, key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
                 if option == correct_mean:
                     st.session_state.score += 1
-                    st.success(f"🎉 정답입니다!")
-                    time.sleep(0.6)
+                    st.success(f"🎉 정답입니다! {correct_pron}")
+                    time.sleep(0.7)
                     st.session_state.current_idx += 1
                     st.rerun()
                 else:
                     st.session_state.is_wrong = True
-                    st.error(f"❌ 오답입니다!")
+                    st.error(f"❌ 오답입니다! 정답은 '{correct_mean}'")
                     st.rerun()
 
 # 오답 시 자동 이동
 if st.session_state.is_wrong:
-    time.sleep(2.0)
+    time.sleep(2.5)
     st.session_state.current_idx += 1
     st.session_state.is_wrong = False
     st.rerun()
 
 st.divider()
-st.markdown(f"#### 📊 현재 학습 통계")
-c1, c2 = st.columns(2)
-c1.metric("현재 점수", f"{st.session_state.score}점")
-c2.metric("진행도", f"{st.session_state.current_idx}/{len(st.session_state.word_list)}")
+st.markdown(f"#### 📈 현재 점수: **{st.session_state.score}** / 진행도: **{st.session_state.current_idx}**")
