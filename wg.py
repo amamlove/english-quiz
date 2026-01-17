@@ -127,24 +127,27 @@ if 'words_dict' not in st.session_state:
         "different": ["ˈdɪfrənt", "디퍼런트", "다른"], "silent": ["ˈsaɪlənt", "사일런트", "조용한"],
         "careful": ["ˈkeəfl", "케어풀", "조심하는"], "quiet": ["ˈkwaɪət", "콰이어트", "조용한"], 
         "quick": ["kwɪk", "퀵", "빠른, 빨리"], "trust": ["trʌst", "트러스트", "믿다, 신뢰하다"], 
-        "important": ["ɪmˈpɔːtnt", "임포턴트", "중요한"], "dangerous": ["ˈ데인저러스", "데인저러스", "위험한"], 
+        "important": ["ɪmˈpɔːtnt", "임포턴트", "중요한"], "dangerous": ["ˈdeɪndʒərəs", "데인저러스", "위험한"], 
         "soon": ["suːn", "순", "곧, 머지않아"], "near": ["nɪə", "니어", "근처의"],
         "popular": ["ˈpɒpjələ", "파퓰러", "인기 있는"], "interesting": ["ˈɪntrəstɪŋ", "인터레스팅", "흥미로운"], 
         "exciting": ["ɪkˈsaɪtɪŋ", "익사이팅", "흥미진진한"], "voice": ["vɔɪs", "보이스", "목소리"], 
-        "acting": ["ˈæktɪŋ", "액팅", "행동"], "saying": ["ˈ세잉", "세잉", "말"]
+        "acting": ["ˈæktɪŋ", "액팅", "행동"], "saying": ["ˈseɪɪŋ", "세잉", "말"]
     }
     st.session_state.word_list = list(st.session_state.words_dict.keys())
     random.shuffle(st.session_state.word_list)
 
-# 2. 초기화 및 UI 로직
+# 초기 세션 상태 설정
 if 'score' not in st.session_state:
     st.session_state.score = 0
+if 'current_idx' not in st.session_state:
     st.session_state.current_idx = 0
-    st.session_state.prev_idx = -1
+if 'is_wrong' not in st.session_state:
     st.session_state.is_wrong = False
+if 'options' not in st.session_state:
+    st.session_state.options = []
 
 st.set_page_config(page_title="영단어 777 발음 마스터", page_icon="📖")
-st.title("🎓 영단어 777-3권 (발음 포함)")
+st.title("🎓 영단어 777-3권")
 
 # 완료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
@@ -154,71 +157,77 @@ if st.session_state.current_idx >= len(st.session_state.word_list):
     if st.button("처음부터 다시 하기"):
         st.session_state.score = 0
         st.session_state.current_idx = 0
-        st.session_state.prev_idx = -1
         random.shuffle(st.session_state.word_list)
+        st.session_state.options = []
         st.rerun()
     st.stop()
 
-# 현재 문제 설정
+# 현재 단어 정보
 current_word = st.session_state.word_list[st.session_state.current_idx]
 word_data = st.session_state.words_dict[current_word]
-correct_ipa = word_data[0]   # 발음기호
-correct_pron = word_data[1]  # 한글읽기
-correct_mean = word_data[2]  # 뜻
+correct_ipa = word_data[0].replace("/", "") # 발음기호 슬러시 제거
+correct_pron = word_data[1]
+correct_mean = word_data[2]
 
 # 보기 생성
-if st.session_state.prev_idx != st.session_state.current_idx:
+if not st.session_state.options:
     other_means = [v[2] for k, v in st.session_state.words_dict.items() if v[2] != correct_mean]
+    # IndexError 방지를 위해 list 형변환 및 중복 제거 후 샘플링
     other_means = list(set(other_means))
-    options = random.sample(other_means, 3)
-    options.append(correct_mean)
-    random.shuffle(options)
-    st.session_state.options = options
-    st.session_state.prev_idx = st.session_state.current_idx
-    st.session_state.is_wrong = False
+    st.session_state.options = random.sample(other_means, 3) + [correct_mean]
+    random.shuffle(st.session_state.options)
 
-# UI 표시
+# UI 레이아웃
 st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
 st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
 
-# 문제 박스 (단어, 발음기호, 한글읽기)
+# 문제 박스 (단어: 파란색 / 발음: 슬러시 없음)
 st.markdown(f"""
-<div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #d1d5db;">
-    <h1 style="margin: 0; color: #1f77b4;">{current_word}</h1>
-    <h3 style="margin: 10px 0; color: #4b5563;">{correct_ipa}</h3>
-    <h4 style="margin: 0; color: #6b7280; font-weight: normal;">[{correct_pron}]</h4>
+<div style="background-color: #ffffff; padding: 40px; border-radius: 20px; text-align: center; border: 2px solid #e0e4e8; box-shadow: 4px 4px 15px rgba(0,0,0,0.05);">
+    <h1 style="margin: 0; color: #1F77B4; font-size: 4rem; font-family: 'Arial';">{current_word}</h1>
+    <div style="margin-top: 20px;">
+        <span style="font-size: 1.6rem; color: #5D6D7E; background-color: #F8F9F9; padding: 5px 12px; border-radius: 8px; margin-right: 10px; border: 1px solid #D5DBDB;">
+            [{correct_ipa}]
+        </span>
+        <span style="font-size: 1.6rem; color: #1F77B4; background-color: #EBF5FB; padding: 5px 12px; border-radius: 8px; border: 1px solid #AED6F1;">
+            [{correct_pron}]
+        </span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 st.write("")
 
-# 버튼 배치
+# 보기 버튼
 col1, col2 = st.columns(2)
 for i, option in enumerate(st.session_state.options):
     with col1 if i % 2 == 0 else col2:
         if st.session_state.is_wrong:
+            # 오답 시 정답 강조
             if option == correct_mean:
-                st.markdown(f"""<div style="background-color: #2ecc71; color: white; padding: 10px; border-radius: 5px; text-align: center; border: 2px solid #27ae60; font-weight: bold; margin-bottom: 10px;">🎯 {option} (정답)</div>""", unsafe_allow_html=True)
+                st.markdown(f'<div style="background-color: #27ae60; color: white; padding: 18px; border-radius: 12px; text-align: center; font-weight: bold; margin-bottom: 12px;">🎯 {option}</div>', unsafe_allow_html=True)
             else:
-                st.markdown(f"""<div style="background-color: #f8f9fa; color: #adb5bd; padding: 10px; border-radius: 5px; text-align: center; border: 1px solid #dee2e6; margin-bottom: 10px;">{option}</div>""", unsafe_allow_html=True)
+                st.markdown(f'<div style="background-color: #f4f6f7; color: #bdc3c7; padding: 18px; border-radius: 12px; text-align: center; margin-bottom: 12px;">{option}</div>', unsafe_allow_html=True)
         else:
-            if st.button(option, key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
+            if st.button(option, key=f"btn_{i}", use_container_width=True):
                 if option == correct_mean:
                     st.session_state.score += 1
-                    st.success(f"🎉 정답입니다! {correct_pron}")
-                    time.sleep(0.7)
+                    st.success("🎉 정답!")
+                    time.sleep(0.8)
                     st.session_state.current_idx += 1
+                    st.session_state.options = [] # 다음 문제를 위해 보기 초기화
                     st.rerun()
                 else:
                     st.session_state.is_wrong = True
-                    st.error(f"❌ 오답입니다! 정답은 '{correct_mean}'")
+                    st.error("❌ 오답!")
                     st.rerun()
 
-# 오답 시 자동 이동
+# 오답 시 지연 후 다음 문제로
 if st.session_state.is_wrong:
-    time.sleep(2.5)
+    time.sleep(2.0)
     st.session_state.current_idx += 1
     st.session_state.is_wrong = False
+    st.session_state.options = []
     st.rerun()
 
 st.divider()
-st.markdown(f"#### 📈 현재 점수: **{st.session_state.score}** / 진행도: **{st.session_state.current_idx}**")
+st.metric("현재 점수", f"{st.session_state.score} / {st.session_state.current_idx}")
