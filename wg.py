@@ -40,7 +40,7 @@ if 'words_dict' not in st.session_state:
         "draw": ["/drɔː/", "드로", "~을 그리다"], "take a shower": ["/teɪk ə ˈʃaʊə/", "테이크 어 샤워", "샤워하다"], 
         "go fishing": ["/ɡəʊ ˈfɪʃɪŋ/", "고 피싱", "낚시하러 가다"], "pet": ["/pet/", "펫", "애완동물"],
         "speak": ["/spiːk/", "스피크", "말하다"], "taste": ["/teɪst/", "테이스트", "맛보다"], 
-        "turtle": ["/ˈtɜːtl/", "터틀", "거북이"], "get up": ["/ɡet ʌp/", "일어나다", "일어나다"],
+        "turtle": ["/ˈtɜːtl/", "터틀", "거북이"], "get up": ["/ɡet ʌp/", "겟 업", "일어나다"],
         "wear": ["/weə/", "웨어", "(옷을) 입다"], "delicious": ["/dɪˈlɪʃəs/", "딜리셔스", "맛있는"], 
         "very": ["/ˈveri/", "베리", "매우"], "hard": ["/hɑːd/", "하드", "열심히"], 
         "perfect": ["/ˈpɜːfɪkt/", "퍼펙트", "완벽한"], "painting": ["/ˈpeɪntɪŋ/", "페인팅", "그림"], 
@@ -92,7 +92,7 @@ if 'words_dict' not in st.session_state:
         "top": ["/tɒp/", "탑", "꼭대기, 맨 위"], "hide": ["/haɪd/", "하이드", "숨기다"], 
         "treasure": ["/ˈtreʒə/", "트레저", "보물"], "pick up": ["/pɪk ʌp/", "픽 업", "~을 줍다"],
         "check": ["/tʃek/", "체크", "점검하다"], "chopsticks": ["/ˈtʃɒpstɪks/", "찹스틱스", "젓가락"], 
-        "climb up": ["/klaɪm ʌp/", "클라임 업", "위로 올라가다"], "ladder": ["/ˈlædə/", "사다리", "사다리"], 
+        "climb up": ["/klaɪm ʌp/", "클라임 업", "위로 올라가다"], "ladder": ["/ˈlædə/", "래더", "사다리"], 
         "in the future": ["/ɪn ðə ˈfjuːtʃə/", "인 더 퓨처", "미래에"], "ticket": ["/ˈtɪkɪt/", "티켓", "표"], 
         "tonight": ["/təˈnaɪt/", "투나잇", "오늘밤(에)"], "cartoon": ["/kɑːˈtuːn/", "카툰", "만화"], 
         "grape": ["/ɡreɪp/", "그레이프", "포도"], "front door": ["/frʌnt dɔː/", "프런트 도어", "현관, 정문"], 
@@ -109,7 +109,7 @@ if 'words_dict' not in st.session_state:
         # --- PAGE 4 ---
         "soap": ["/səʊp/", "소프", "비누"], "fresh": ["/freʃ/", "프레쉬", "신선한"], 
         "cheese stick": ["/tʃiːz stɪk/", "치즈 스틱", "치즈스틱"], "easy": ["/ˈiːzi/", "이지", "쉬운"], 
-        "police officer": ["/pəˈliːs ˈɒfɪsə/", "폴리스 오피서", "경찰관"], "tired": ["/ˈtaɪəd/", "피곤한", "피곤한"], 
+        "police officer": ["/pəˈliːs ˈɒfɪsə/", "폴리스 오피서", "경찰관"], "tired": ["/ˈtaɪəd/", "타이어드", "피곤한"], 
         "amazing": ["/əˈmeɪzɪŋ/", "어메이징", "놀라운"], "silk": ["/sɪlk/", "실크", "비단"], 
         "writer": ["/ˈraɪtə/", "라이터", "작가"], "angel": ["/ˈeɪndʒl/", "엔젤", "천사"], 
         "terrible": ["/ˈterəbl/", "테러블", "끔찍한, 안 좋은"], "singer": ["/ˈsɪŋə/", "싱어", "가수"],
@@ -118,7 +118,7 @@ if 'words_dict' not in st.session_state:
         "whale": ["/weɪl/", "웨일", "고래"], "club": ["/klʌb/", "클럽", "동아리, 클럽"], 
         "president": ["/ˈprezɪdənt/", "프레지던트", "대통령, 사장"], "among": ["/əˈmʌŋ/", "어망", "~ 사이에"], 
         "spend": ["/spend/", "스펜드", "(시간을) 보내다"], "because of": ["/bɪˈkɒz əv/", "비코즈 오브", "~ 때문에"], 
-        "runner": ["/ˈrʌnə/", "러너", "주자, 달리는 사람"], "mountain": ["/ˈmaʊntən/", "마운틴", "산"], 
+        "runner": ["/ˈrʌnə/", "러너", "주자, 달리는 사람"], "mountain": ["/ˈ마운틴/", "마운틴", "산"], 
         "subject": ["/ˈsʌbdʒɪkt/", "서브젝트", "과목"], "restaurant": ["/ˈrestrɒnt/", "레스토랑", "식당"], 
         "neighborhood": ["/ˈneɪbəhʊd/", "네이버후드", "이웃, 동네"], "bright": ["/braɪt/", "브라이트", "밝은"],
         "carefully": ["/ˈkeəfəli/", "케어풀리", "조심해서, 주의하여"], "by car": ["/baɪ kɑː/", "바이 카", "자동차로"], 
@@ -127,7 +127,7 @@ if 'words_dict' not in st.session_state:
         "different": ["/ˈdɪfrənt/", "디퍼런트", "다른"], "silent": ["/ˈsaɪlənt/", "사일런트", "조용한"],
         "careful": ["/ˈkeəfl/", "케어풀", "조심하는"], "quiet": ["/ˈkwaɪət/", "콰이어트", "조용한"], 
         "quick": ["/kwɪk/", "퀵", "빠른, 빨리"], "trust": ["/trʌst/", "트러스트", "믿다, 신뢰하다"], 
-        "important": ["/ɪmˈpɔːtnt/", "임포턴트", "중요한"], "dangerous": ["/ˈdeɪndʒərəs/", "데인저러스", "위험한"], 
+        "important": ["/ɪmˈpɔːtnt/", "임포턴트", "중요한"], "dangerous": ["/ˈ데인저러스/", "데인저러스", "위험한"], 
         "soon": ["/suːn/", "순", "곧, 머지않아"], "near": ["/nɪə/", "니어", "근처의"],
         "popular": ["/ˈpɒpjələ/", "파퓰러", "인기 있는"], "interesting": ["/ˈɪntrəstɪŋ/", "인터레스팅", "흥미로운"], 
         "exciting": ["/ɪkˈsaɪtɪŋ/", "익사이팅", "흥미진진한"], "voice": ["/vɔɪs/", "보이스", "목소리"], 
@@ -144,7 +144,7 @@ if 'score' not in st.session_state:
     st.session_state.is_wrong = False
 
 st.set_page_config(page_title="영단어 777 발음 마스터", page_icon="📖")
-st.title("🎓 영단어 777-3권 (발음 포함)")
+st.title("🎓 영단어 777-3권")
 
 # 완료 화면
 if st.session_state.current_idx >= len(st.session_state.word_list):
@@ -181,12 +181,14 @@ if st.session_state.prev_idx != st.session_state.current_idx:
 st.write(f"### 문제 {st.session_state.current_idx + 1} / {len(st.session_state.word_list)}")
 st.progress((st.session_state.current_idx) / len(st.session_state.word_list))
 
-# 문제 박스 (단어, 발음기호, 한글읽기)
+# 문제 박스 (단어 아래에 [발음기호][한글읽기] 표시)
 st.markdown(f"""
-<div style="background-color: #f0f2f6; padding: 20px; border-radius: 10px; text-align: center; border: 1px solid #d1d5db;">
-    <h1 style="margin: 0; color: #1f77b4;">{current_word}</h1>
-    <h3 style="margin: 10px 0; color: #4b5563;">{correct_ipa}</h3>
-    <h4 style="margin: 0; color: #6b7280; font-weight: normal;">[{correct_pron}]</h4>
+<div style="background-color: #f0f2f6; padding: 30px; border-radius: 15px; text-align: center; border: 1px solid #d1d5db; box-shadow: 2px 2px 10px rgba(0,0,0,0.05);">
+    <h1 style="margin: 0; color: #1f77b4; font-size: 3.5rem;">{current_word}</h1>
+    <div style="margin-top: 15px;">
+        <span style="font-size: 1.5rem; color: #4b5563; font-weight: bold; margin-right: 10px;">[{correct_ipa}]</span>
+        <span style="font-size: 1.5rem; color: #1f77b4; font-weight: bold;">[{correct_pron}]</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 st.write("")
@@ -197,25 +199,25 @@ for i, option in enumerate(st.session_state.options):
     with col1 if i % 2 == 0 else col2:
         if st.session_state.is_wrong:
             if option == correct_mean:
-                st.markdown(f"""<div style="background-color: #2ecc71; color: white; padding: 10px; border-radius: 5px; text-align: center; border: 2px solid #27ae60; font-weight: bold; margin-bottom: 10px;">🎯 {option} (정답)</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="background-color: #2ecc71; color: white; padding: 15px; border-radius: 8px; text-align: center; border: 2px solid #27ae60; font-weight: bold; margin-bottom: 10px;">🎯 {option}</div>""", unsafe_allow_html=True)
             else:
-                st.markdown(f"""<div style="background-color: #f8f9fa; color: #adb5bd; padding: 10px; border-radius: 5px; text-align: center; border: 1px solid #dee2e6; margin-bottom: 10px;">{option}</div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div style="background-color: #f8f9fa; color: #adb5bd; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #dee2e6; margin-bottom: 10px;">{option}</div>""", unsafe_allow_html=True)
         else:
             if st.button(option, key=f"btn_{st.session_state.current_idx}_{i}", use_container_width=True):
                 if option == correct_mean:
                     st.session_state.score += 1
-                    st.success(f"🎉 정답입니다! {correct_pron}")
-                    time.sleep(0.7)
+                    st.success(f"🎉 정답!")
+                    time.sleep(0.6)
                     st.session_state.current_idx += 1
                     st.rerun()
                 else:
                     st.session_state.is_wrong = True
-                    st.error(f"❌ 오답입니다! 정답은 '{correct_mean}'")
+                    st.error(f"❌ 오답!")
                     st.rerun()
 
 # 오답 시 자동 이동
 if st.session_state.is_wrong:
-    time.sleep(2.5)
+    time.sleep(2.0)
     st.session_state.current_idx += 1
     st.session_state.is_wrong = False
     st.rerun()
